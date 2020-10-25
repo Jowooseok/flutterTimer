@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -31,6 +32,26 @@ class _MyHomePageState extends State<MyHomePage> {
   int textFiled = 0;
   int totalBuyin = 0;
   bool textEdit = false;
+
+  void playerSuffle() {
+    var random = new Random();
+    for (var i = players.length - 1; i > 0; i--) {
+      // Pick a pseudorandom number according to the list length
+      var n = random.nextInt(i + 1);
+
+      var temp = players[i];
+      players[i] = players[n];
+      players[n] = temp;
+
+      var temp1 = playersBuyin[i];
+      playersBuyin[i] = playersBuyin[n];
+      playersBuyin[n] = temp1;
+
+      var temp2 = playersTextField[i];
+      playersTextField[i] = playersTextField[n];
+      playersTextField[n] = temp2;
+    }
+  }
 
   TextEditingController _controller;
   TextEditingController _controller1;
@@ -137,9 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     FlatButton(
                         onPressed: (() => {
                               setState(() {
-                                playersBuyin = [];
-                                players = [];
-                                totalBuyin = 0;
+                                playerSuffle();
                               })
                             }),
                         child: Icon(Icons.refresh)),
@@ -155,6 +174,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                 textEdit = true;
                               })
                             })),
+                    FlatButton(
+                      child: Text('ReSet'),
+                      onPressed: (() => {
+                            setState(() {
+                              playersBuyin = [];
+                              players = [];
+                              totalBuyin = 0;
+                            })
+                          }),
+                    ),
                     Text(
                       'Total Buy-in $totalBuyin',
                       textAlign: TextAlign.end,
