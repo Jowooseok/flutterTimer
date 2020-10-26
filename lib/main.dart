@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'dart:math';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,6 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int textFiled = 0;
   int totalBuyin = 0;
   bool textEdit = false;
+  bool gamePageEdit = false;
+  bool _isPause = true; //타이머
 
   void playerSuffle() {
     var random = new Random();
@@ -66,6 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController _controller10;
   TextEditingController _controller11;
 
+  TextEditingController _lvController;
+  TextEditingController _timeController;
+  TextEditingController _blindController;
+
+  CountDownController _timerController = CountDownController();
+
   void initState() {
     super.initState();
     _controller = TextEditingController();
@@ -80,6 +89,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller9 = TextEditingController();
     _controller10 = TextEditingController();
     _controller11 = TextEditingController();
+
+    _lvController = TextEditingController();
+    _timeController = TextEditingController();
+    _blindController = TextEditingController();
   }
 
   void dispose() {
@@ -95,6 +108,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller9.dispose();
     _controller10.dispose();
     _controller11.dispose();
+    _lvController.dispose();
+    _timeController.dispose();
+    _blindController.dispose();
+
     super.dispose();
   }
 
@@ -108,7 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
             title: const Text('Holdum Dealer Timer'),
           ),
           body: TabBarView(children: [
-            Text('1page'),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -252,7 +268,153 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            Text('3page'),
+            Text('1page'),
+            Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          'LV',
+                          textAlign: TextAlign.end,
+                        ),
+                        Container(
+                          width: 200.0,
+                          child: TextField(
+                            enabled: gamePageEdit,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            controller: _lvController,
+                            onSubmitted: (String value) {
+                              _lvController.clear();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 400,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('TIME'),
+                        Container(
+                          width: 150.0,
+                          child: CircularCountDownTimer(
+                            // Countdown duration in Seconds
+                            duration: 420,
+
+                            // Controller to control (i.e Pause, Resume, Restart) the Countdown
+                            controller: _timerController,
+
+                            // Width of the Countdown Widget
+                            width: MediaQuery.of(context).size.width / 2,
+
+                            // Height of the Countdown Widget
+                            height: MediaQuery.of(context).size.height / 3,
+
+                            // Default Color for Countdown Timer
+                            color: Colors.white,
+
+                            // Filling Color for Countdown Timer
+                            fillColor: Colors.red,
+
+                            // Background Color for Countdown Widget
+                            backgroundColor: null,
+
+                            // Border Thickness of the Countdown Circle
+                            strokeWidth: 5.0,
+
+                            // Text Style for Countdown Text
+                            textStyle: TextStyle(
+                                fontSize: 22.0,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+
+                            // true for reverse countdown (max to 0), false for forward countdown (0 to max)
+                            isReverse: true,
+
+                            // true for reverse animation, false for forward animation
+                            isReverseAnimation: true,
+
+                            // Optional [bool] to hide the [Text] in this widget.
+                            isTimerTextShown: true,
+
+                            // Function which will execute when the Countdown Ends
+                            onComplete: () {
+                              // Here, do whatever you want
+                              print('Countdown Ended');
+                            },
+                          ),
+                        ),
+//
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 300,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('Blind'),
+                        Container(
+                          width: 150,
+                          child: TextField(
+                            enabled: gamePageEdit,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            controller: _blindController,
+                            onSubmitted: (String value) {
+                              _blindController.clear();
+                            },
+                          ),
+                        ),
+                        Text('ANTE'),
+                        Checkbox(
+                          value: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 400.0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('Next.B'),
+                        Container(
+                          width: 200,
+                          child: Text(
+                            '20/40',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              floatingActionButton: FloatingActionButton.extended(
+                  onPressed: () {
+                    setState(() {
+                      if (_isPause) {
+                        _isPause = false;
+                        _timerController.resume();
+                      } else {
+                        _isPause = true;
+                        _timerController.pause();
+                      }
+                    });
+                  },
+                  icon: Icon(_isPause ? Icons.play_arrow : Icons.pause),
+                  label: Text(_isPause ? "Resume" : "Pause")),
+            ),
           ]),
           bottomNavigationBar: ConvexAppBar(
             items: [
