@@ -35,6 +35,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool textEdit = false;
   bool gamePageEdit = false;
   bool _isPause = true; //타이머
+  int timerSeconds = 420;
+  int timerCount = 0;
 
   void playerSuffle() {
     var random = new Random();
@@ -73,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController _timeController;
   TextEditingController _blindController;
 
-  CountDownController _timerController = CountDownController();
+  CountDownController _timerController;
 
   void initState() {
     super.initState();
@@ -93,6 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _lvController = TextEditingController();
     _timeController = TextEditingController();
     _blindController = TextEditingController();
+
+    _timerController = CountDownController();
   }
 
   void dispose() {
@@ -308,7 +312,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           width: 150.0,
                           child: CircularCountDownTimer(
                             // Countdown duration in Seconds
-                            duration: 420,
+                            duration: 1,
 
                             // Controller to control (i.e Pause, Resume, Restart) the Countdown
                             controller: _timerController,
@@ -349,7 +353,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             // Function which will execute when the Countdown Ends
                             onComplete: () {
                               // Here, do whatever you want
-                              print('Countdown Ended');
+                              if (timerCount == 0) {
+                                _timerController.restart(
+                                    duration: timerSeconds);
+                                _timerController.pause();
+                              }
                             },
                           ),
                         ),
